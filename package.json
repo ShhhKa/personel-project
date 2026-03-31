@@ -1,0 +1,20 @@
+{
+  "name": "memory-hub",
+  "version": "3.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute memory-hub-db --remote --file=schema.sql"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "agents": "^0.0.50",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250313.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.14.0"
+  }
+}

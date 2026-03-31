@@ -1,0 +1,16 @@
+name = "memory-hub"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "memory-hub-db"
+database_id = "cc19bed6-edee-4d17-81cd-8655718cf974"
+
+[triggers]
+crons = ["0 3 * * *"]
+
+[[migrations]]
+tag = "v2"
+deleted_classes = ["MemoryMCP"]
