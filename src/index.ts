@@ -37,7 +37,7 @@ const TOOLS = [
   },
   {
     name: "write",
-    description: "写记忆库。type: memory|todo|rule|habit。传id更新,不传创建。todo推迟: status=postponed+postponed_to时自动创建新pending。habit打卡: 传checkin=true追加今日记录到log。",
+    description: "写记忆库。type: memory|todo|rule|habit。传id更新,不传创建。memory三层规范——core(永久):仅存用户身份、偏好、重要规则、核心目标,不存具体事件或会过时的信息,极少写入; daily(5天过期):近期事件、对话摘要、临时上下文,不存长期信息→core、带感情日记→diary、待办→todo; diary(永久):每天≤1篇带感情的个人记录,需传mood,不存流水账→daily。todo推迟: status=postponed+postponed_to时自动创建新pending。habit打卡: 传checkin=true追加今日记录到log。",
     inputSchema: {
       type: "object",
       properties: {

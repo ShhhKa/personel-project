@@ -376,7 +376,7 @@ window.editMem=async id=>{const m=await fetch(A+'/memories?limit=100').then(r=>r
 window.delMem=async id=>{if(!confirm('确定删除？'))return;await fetch(A+'/memories/'+id,{method:'DELETE'});loadAll();loadStats();};
 window.editTodo=async id=>{const t=await fetch(A+'/todos?limit=100').then(r=>r.json());const x=t.find(i=>i.id===id);if(x)openModal('todo',x);};
 window.delTodo=async id=>{if(!confirm('确定删除？'))return;await fetch(A+'/todos/'+id,{method:'DELETE'});loadAll();loadStats();};
-window.doneTodo=async id=>{await fetch(A+'/todos/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'done',title:'_'})});loadAll();};
+window.doneTodo=async id=>{await fetch(A+'/todos/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'done'})});loadAll();};
 window.postponeTodo=async id=>{
   const d=prompt('推迟到哪天？(YYYY-MM-DD)');if(!d)return;
   await fetch(A+'/todos/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'postponed',postponed_to:d})});
