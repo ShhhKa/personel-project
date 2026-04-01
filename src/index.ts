@@ -254,7 +254,7 @@ async function handleAPI(req: Request, env: Env): Promise<Response> {
         const r = await db.prepare("INSERT INTO todos(title,notes,start_time,end_time,due_date,location,category,priority,status,rule_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,'pending',?,?,?)").bind(old?.title,old?.notes||null,old?.start_time?d.postponed_to+(old.start_time as string).slice(10):null,old?.end_time?d.postponed_to+(old.end_time as string).slice(10):null,d.postponed_to,old?.location||null,old?.category||"生活",old?.priority||"medium",old?.rule_id||null,n,n).run();
         return Response.json({ ok:true, postponed:xid, new_id:r.meta?.last_row_id }, { headers: CORS });
       }
-      await db.prepare("UPDATE todos SET title=?,notes=?,start_time=?,end_time=?,due_date=?,location=?,category=?,priority=?,status=?,updated_at=? WHERE id=?").bind(d.title,d.notes||null,d.start_time||null,d.end_time||null,d.due_date||null,d.location||null,d.category||"生活",d.priority||"medium",d.status||"pending",n,xid).run();
+      await db.prepare("UPDATE todos SET title=COALESCE(?,title),notes=COALESCE(?,notes),start_time=COALESCE(?,start_time),end_time=COALESCE(?,end_time),due_date=COALESCE(?,due_date),location=COALESCE(?,location),category=COALESCE(?,category),priority=COALESCE(?,priority),status=COALESCE(?,status),updated_at=? WHERE id=?").bind(d.title||null,d.notes||null,d.start_time||null,d.end_time||null,d.due_date||null,d.location||null,d.category||null,d.priority||null,d.status||null,n,xid).run();
       return Response.json({ ok:true, id:xid }, { headers: CORS });
     }
     if (path.match(/^\/api\/todos\/\d+$/) && method === "DELETE") {
