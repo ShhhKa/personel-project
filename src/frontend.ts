@@ -24,6 +24,8 @@ h1 .dot{width:14px;height:14px;border-radius:50%;background:var(--ac)}
 .vb.on{background:var(--bg3);color:var(--tx);border-color:var(--ac)}
 .card{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:10px}
 .card:hover{border-color:var(--ac)}
+.card.done{opacity:.55}
+.card.done .ct{text-decoration:line-through;color:var(--tx2)}
 .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
 .badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:500}
 .b-core{background:#3b2e7e;color:#c4b5fd}.b-daily{background:#3b3520;color:var(--am)}.b-diary{background:#2e3b2e;color:var(--gn)}
@@ -158,6 +160,18 @@ const MC={happy:'😊',sad:'😢',calm:'😌',excited:'🤩',anxious:'😰'};
 const MCLR={happy:'#4ade80',sad:'#60a5fa',calm:'#94a3b8',excited:'#fbbf24',anxious:'#f472b6'};
 const TCLR={'工作':'#60a5fa','生活':'#4ade80','学习':'#c4b5fd'};
 
+function moodColor(m){
+  if(!m)return null;
+  if(MCLR[m])return MCLR[m];
+  const s=m.toLowerCase();
+  if(/anxious|焦虑|不安|紧张/.test(s))return MCLR.anxious;
+  if(/sad|难过|心疼|沉重|grief|悲|哀|失落|wistful|exhaust|frustrat|protect/.test(s))return MCLR.sad;
+  if(/excit|激动|兴奋|期待|好奇|充实|温暖/.test(s))return MCLR.excited;
+  if(/happy|开心|快乐|愉悦|满足|欣慰|gentle|honest/.test(s))return MCLR.happy;
+  if(/calm|平静|稳|清醒|focused|pragmatic/.test(s))return MCLR.calm;
+  return MCLR.calm;
+}
+
 init();
 async function init(){loadStats();loadAll();}
 
@@ -268,6 +282,11 @@ async function loadAll(){
 function renderList(items){
   const el=$('list-view');
   if(!items.length){el.innerHTML='<div class="empty">暂无数据</div>';return;}
+items.sort((a,b)=>{
+    const ad=(a._t==='todo'&&(a.status==='done'||a.status==='cancelled'))?1:0;
+    const bd=(b._t==='todo'&&(b.status==='done'||b.status==='cancelled'))?1:0;
+    return ad-bd;
+  });
   el.innerHTML=items.map(m=>{
     if(m._t==='memory'){
       const d=m.created_at||'';
@@ -285,7 +304,8 @@ function renderList(items){
       const st=m.status;
       const si=st==='done'?'✅':st==='postponed'?'⏩':st==='cancelled'?'❌':'⏳';
       const pi=m.priority==='high'?'🔴':m.priority==='low'?'🟢':'🟡';
-      return '<div class="card"><div class="ch"><span class="badge '+(TC[m.category]||'b-life')+'">'+esc(m.category||'生活')+'</span><span style="font-size:12px;color:var(--tx2)">'+ds+'</span></div>'
+return '<div class="card'+(st==='done'||st==='cancelled'?' done':'')+'"><div class="ch"><span class="badge '+(TC[m.category]||'b-life')+'">'+esc(m.category||'生活')+'</span><span style="font-size:12px;color:var(--tx2)">'+ds+'</span></div>'      
+
         +'<div class="ct">'+si+' '+esc(m.title)+'</div>'
         +(m.notes?'<div class="cc">'+esc(m.notes).slice(0,200)+'</div>':'')
         +'<div class="cm">'+pi+' '+(m.location?'📍'+esc(m.location):'')+(m.rule_id?' 🔁':'')+'</div>'
@@ -348,7 +368,7 @@ function renderCal(data){
     const items=dayMap[ds]||[];
     let dots='';
     if(items.length){dots='<div class="dots">';items.slice(0,4).forEach(it=>{
-      let clr=it.mood?MCLR[it.mood]||'#94a3b8':TCLR[it.category]||'#4ade80';
+let clr=it.mood?(moodColor(it.mood)||'#94a3b8'):TCLR[it.category]||'#4ade80';
       dots+='<div class="dot-s" style="background:'+clr+'"></div>';
     });dots+='</div>';}
     h+='<div class="cd'+(isT?' today':'')+'" onclick="selDay(\\''+ds+'\\')">'+d+dots+'</div>';

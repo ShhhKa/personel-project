@@ -171,7 +171,7 @@ async function handleDelete(db: D1Database, args: any): Promise<string> {
     await db.prepare("DELETE FROM "+(table[type]||"memories")+" WHERE id=?").bind(id).run();
     return JSON.stringify({ ok: true, deleted: id });
   } else if (type === "memory" && layer && days) {
-    const r = await db.prepare("DELETE FROM memories WHERE layer=? AND created_at<datetime('now',?)").bind(layer, "-"+days+" days").run();
+const r = await db.prepare("DELETE FROM memories WHERE layer=? AND datetime(created_at)<datetime('now',?)").bind(layer, "-"+days+" days").run();
     return JSON.stringify({ ok: true, layer, cleaned: r.meta?.changes || 0 });
   }
   return JSON.stringify({ error: "需要id或layer+days" });
@@ -371,7 +371,7 @@ export default {
     return new Response("Not found", { status:404 });
   },
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext) {
-    await env.DB.prepare("DELETE FROM memories WHERE layer='daily' AND created_at<datetime('now','-5 days')").run();
+await env.DB.prepare("DELETE FROM memories WHERE layer='daily' AND datetime(created_at)<datetime('now','-5 days')").run();
     await generateRecurrences(env.DB);
   },
 };
